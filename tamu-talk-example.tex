@@ -1,0 +1,301 @@
+%! TeX program = lualatex
+% An example talk using tamu-talk. Copy it as a starting point for your own.
+% The Texas A&M logo is not included: see the README or `texdoc tamu-talk`.
+\DocumentMetadata{
+  lang=en,
+  tagging=on,
+  pdfstandard=UA-2,
+  pdfstandard=A-4f,
+}
+
+\documentclass{ltx-talk}
+
+\usepackage{tamu-talk}
+
+\SetKeys[tamu-talk]{
+  page-numbers = total,
+  title-bold   = false,
+  title-box    = true,
+  header-style = banner,
+  title-logo   = false, % set to true once the logo is installed
+}
+
+\usepackage{fontspec}
+\setmainfont{Ysabeau}
+
+\newcommand{\lining}[1]{{\addfontfeature{Numbers=Lining}#1}}
+
+\setmonofont{Fira Mono}[Scale=MatchLowercase]
+
+\usepackage{lua-unicode-math}
+\usepackage{fancyvrb}
+
+\title{Title of Your Talk}
+\subtitle{An Optional Subtitle}
+\author{John Doe}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \maketitle[
+    framestyle    = tamu,
+    title-size    = 18pt,
+    subtitle-size = 11pt,
+    logo-width    = .25\textwidth,
+    logo-height   = 28mm,
+  ]
+\end{frame}
+
+\section{Equation}
+
+\begin{frame}
+  \frametitle{An Equation}
+  \[
+    \int_0^\infty e^{-x^2} \, dx = \frac{\sqrt{\pi}}{2}
+  \]
+\end{frame}
+
+\section{Figure}
+
+\begin{frame*}
+  \frametitle{A Figure with Alt Text}
+  Alt text is supplied via the \texttt{alt=} key on \texttt{\textbackslash includegraphics}.
+
+  \bigskip
+  \begin{columns}
+    \begin{column}{0.55\textwidth}
+      \begin{sidebar}
+        \begin{Verbatim}[gobble=8]
+        \begin{figure}
+          \centering
+          \includegraphics[
+            width=.5\linewidth,
+            alt={A gray placeholder image
+              with a large letter A.}
+          ]{example-image-a}
+        \end{figure}
+        \end{Verbatim}
+      \end{sidebar}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[
+          width=.55\linewidth,
+          alt={A gray placeholder image with a large letter A.}
+        ]{example-image-a}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame*}
+
+\section{Boxes}
+
+\begin{frame*}
+  \frametitle{headerbox}
+  \begin{headerbox}{Title}
+    Solid maroon header bar, tan-tinted body, one fixed style.
+  \end{headerbox}
+
+  \bigskip
+  \begin{sidebar}
+    \begin{Verbatim}[gobble=6]
+      \begin{headerbox}{Title}
+        Body text.
+      \end{headerbox}
+    \end{Verbatim}
+  \end{sidebar}
+\end{frame*}
+
+\begin{frame*}
+  \frametitle{lasso}
+  \begin{lasso}{Title}
+    Solid border, left-offset floating title tab.
+  \end{lasso}
+
+  \bigskip
+  \begin{lasso}[black]{Title}
+    The only other color option.
+  \end{lasso}
+
+  \bigskip
+  \begin{sidebar}
+    \begin{Verbatim}[gobble=6]
+      \begin{lasso}[maroon|black]{Title}
+        Body text.
+      \end{lasso}
+    \end{Verbatim}
+  \end{sidebar}
+\end{frame*}
+
+\begin{frame*}
+  \frametitle{sidebar}
+  \begin{sidebar}
+    Thick maroon left bar, tan-tinted body, no title.
+  \end{sidebar}
+
+  \bigskip
+  \begin{sidebar}
+    \begin{Verbatim}[gobble=6]
+      \begin{sidebar}[variant] % (optional variants: forest | slate)
+        Body text.
+      \end{sidebar}
+
+      % ...or any tcolorbox keys, e.g. to recolor it by hand
+      \begin{sidebar}[colback=TAMUGray!20, borderline west={3pt}{0pt}{TAMUGray}]
+        Body text.
+      \end{sidebar}
+    \end{Verbatim}
+  \end{sidebar}
+\end{frame*}
+
+\begin{frame*}
+  \frametitle{elevate}
+  \begin{elevate}[Title]
+    Rounded corners, maroon header bar, drop shadow.
+  \end{elevate}
+
+  \bigskip
+  \begin{elevate}
+    No title given -- no header bar at all.
+  \end{elevate}
+
+  \bigskip
+  \begin{sidebar}
+    \begin{Verbatim}[gobble=6]
+      \begin{elevate}[Title]  % [Title] is optional; omit it for no header
+        Body text.
+      \end{elevate}
+    \end{Verbatim}
+  \end{sidebar}
+\end{frame*}
+
+\begin{frame*}
+  \frametitle{outline}
+  \begin{outline}
+    No fill at all -- just a thin maroon border.
+  \end{outline}
+
+  \bigskip
+  \begin{outline}[2pt]
+    A custom line width.
+  \end{outline}
+
+  \bigskip
+  \begin{sidebar}
+    \begin{Verbatim}[gobble=6]
+      \begin{outline}[.75pt]  % line width, optional, default shown
+        Body text.
+      \end{outline}
+    \end{Verbatim}
+  \end{sidebar}
+\end{frame*}
+
+\section{Colors}
+
+\newcommand{\swatch}[2]{%
+  \begin{minipage}[t]{3.2cm}
+    {\fboxsep=0pt \colorbox{#1}{\rule{0pt}{1.2cm}\rule{3.2cm}{0pt}}}
+    \\[2pt]
+    \small #1\par
+    \lining{#2}
+  \end{minipage}%
+}
+
+\begin{frame}
+  \frametitle{Brand Colors}
+
+  \begin{center}
+    \swatch{TAMUMaroon}{\#500000}
+    \swatch{TAMUTan}{\#D6D3C4}
+    \swatch{TAMUGray}{\#707070}
+  \end{center}
+
+  \bigskip
+  \begin{center}
+    \swatch{TAMUDarkGray}{\#3E3E3E}
+    \swatch{TAMULightGray}{\#D1D1D1}
+    \swatch{TAMUNearBlack}{\#202020}
+  \end{center}
+\end{frame}
+
+\begin{frame*}
+  \frametitle{Non-Brand Colors}
+  The package \verb|ltx-talk| itself provides an \verb|\alert{}| command which uses \alert{this red} color by default.
+  \vspace{1em}
+
+  It also provides a named color called \verb|example| which is \textcolor{example}{green}.
+  \vspace{1em}
+
+  Additionally, \verb|tamu-talk| provides two off-brand colors that pair well with maroon:
+
+  \bigskip
+  \begin{sidebar}[forest]
+    \textbf{forest} (off-brand).
+  \end{sidebar}
+
+  \bigskip
+  \begin{sidebar}[slate]
+    \textbf{slate} (off-brand).
+  \end{sidebar}
+\end{frame*}
+
+\appendix
+
+\section{Appendix}
+
+\subsection{Backup}
+
+\begin{frame*}
+  \frametitle{Supplementary Material}
+  Use \verb|\appendix| to section off backup slides (to avoid running up the page counter).
+
+  \bigskip
+  % gobble=N strips the first N characters of leading whitespace from
+  % every line of the Verbatim block. It lets this block be indented in
+  % the .tex source (to read cleanly alongside the surrounding code)
+  % without that indentation showing up in the typeset output.
+  \begin{sidebar}
+    \begin{Verbatim}[gobble=6]
+      \begin{document}
+
+      % ... main talk content ...
+
+      \appendix
+
+      \begin{frame}
+        \frametitle{Supplementary Material}
+        Body text.
+      \end{frame}
+
+      \end{document}
+    \end{Verbatim}
+  \end{sidebar}
+\end{frame*}
+
+\subsection{Overlays}
+
+\begin{frame}
+  \frametitle{Incremental Overlays}
+  \begin{itemize}[<+->]
+    \item First point, shown on slide 1 onward.
+    \item Second point, shown on slide 2 onward.
+    \item Third point, shown on slide 3 onward.
+  \end{itemize}
+
+  \onslide<3->{
+    \alert<.->{This appears at the same time as the third bullet.}
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{More Convoluted Transitions}
+  \onslide<1->{Always shown from slide 1 on (\texttt{onslide}).}\\
+  \uncover<2->{Uncovered from slide 2 on -- reserves its space even before that (\texttt{uncover}).}\\
+  \visible<3->{Visible only from slide 3 on -- like uncover, but never ``ghosted" (\texttt{visible}).}\\
+  \invisible<4->{Hidden from slide 4 on -- the opposite of visible (\texttt{invisible}).}\\
+  \alt<2>{On slide 2 specifically.}{Not on slide 2.}\quad(\texttt{alt})
+\end{frame}
+
+\end{document}

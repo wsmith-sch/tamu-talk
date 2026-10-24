@@ -1,0 +1,787 @@
+% \iffalse meta-comment
+%
+% File: tamu-talk.dtx Copyright (C) 2026 Wyatt Smith
+%
+% It may be distributed and/or modified under the conditions of the
+% LaTeX Project Public License (LPPL), either version 1.3c of this
+% license or (at your option) any later version.  The latest version
+% of this license is in the file
+%
+%    https://www.latex-project.org/lppl.txt
+%
+% This work has the LPPL maintenance status "maintained".
+% The Current Maintainer of this work is Wyatt Smith (216wsmith@gmail.com).
+%
+% This file is part of the "tamu-talk bundle" (The Work in LPPL)
+% and all files in that bundle must be distributed together.
+%
+% -----------------------------------------------------------------------
+%
+% The development version of the bundle can be found at
+%
+%    https://github.com/wsmith-sch/tamu-talk
+%
+% -----------------------------------------------------------------------
+%
+%<*driver>
+\documentclass{l3doc}
+\begin{document}
+  \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \title{The \pkg{tamu-talk} package: code}
+% \author{Wyatt Smith\thanks{E-mail: \href{mailto:216wsmith@gmail.com}{216wsmith@gmail.com}}}
+% \date{Released 2026-10-24 (v0.1.0)}
+%
+% \maketitle
+%
+% \begin{documentation}
+%
+% \pkg{tamu-talk} is an independently maintained Texas A\&M theme for the
+% \pkg{ltx-talk} class. This document is its code. For how to use it, see
+% the user guide, \texttt{tamu-talk-doc.pdf} (\texttt{texdoc tamu-talk}).
+% The code is split into smaller packages, which \pkg{tamu-talk} loads in
+% order.
+%
+% \end{documentation}
+%
+% \begin{implementation}
+%
+% \section{\pkg{tamu-talk}: Main package}
+%
+%    \begin{macrocode}
+%<*package>
+%<@@=tamu_talk>
+\ProvidesExplPackage
+  {tamu-talk}
+  {2026-10-24}
+  {0.1.0}
+  {A TAMU theme for ltx-talk}
+
+\RequirePackage {tamu-talk-compat}
+\RequirePackage {tamu-talk-colors}
+\RequirePackage {tamu-talk-boxes}
+\RequirePackage {tamu-talk-titlepage}
+\RequirePackage {tamu-talk-header}
+\RequirePackage {tamu-talk-footer}
+\RequirePackage {tamu-talk-options}
+%    \end{macrocode}
+%
+% Apply options given when the package is loaded.
+%
+%    \begin{macrocode}
+\ProcessKeyOptions [tamu-talk]
+%</package>
+%    \end{macrocode}
+%
+% \section{\pkg{tamu-talk-compat}: Class and version checks}
+%
+%    \begin{macrocode}
+%<*compat>
+%<@@=tamu_talk>
+\ProvidesExplPackage
+  {tamu-talk-compat}
+  {2026-10-24}
+  {0.1.0}
+  {ltx-talk version guard for tamu-talk}
+%    \end{macrocode}
+%
+% Stop with a clear error unless the class is \pkg{ltx-talk}, and recent
+% enough.
+%
+%    \begin{macrocode}
+\msg_new:nnnn {tamu-talk} {wrong-class}
+  { The~'tamu-talk'~package~requires~the~'ltx-talk'~class. }
+  {
+    Load~the~class~first:~\iow_char:N\\documentclass{ltx-talk}.~
+    For~Beamer~presentations,~try~the~'beamerthemetamu'~theme~instead.
+  }
+
+\IfClassLoadedTF {ltx-talk}
+  { }
+  { \msg_fatal:nn {tamu-talk} {wrong-class} }
+
+\msg_new:nnnn {tamu-talk} {ltx-talk-too-old}
+  { tamu-talk~requires~ltx-talk~2026-09-10~or~later. }
+  {
+    tamu-talk~was~developed~against~ltx-talk~2026-09-10~and~has~not~
+    been~checked~against~older~releases.~Update~ltx-talk,~e.g.~with~
+    'tlmgr~update~ltx-talk'.
+  }
+
+\IfClassAtLeastTF {ltx-talk} {2026-09-10}
+  { }
+  { \msg_error:nn {tamu-talk} {ltx-talk-too-old} }
+%</compat>
+%    \end{macrocode}
+%
+% \section{\pkg{tamu-talk-colors}: Colors}
+%
+%    \begin{macrocode}
+%<*colors>
+%<@@=tamu_talk>
+\ProvidesExplPackage
+  {tamu-talk-colors}
+  {2026-10-24}
+  {0.1.0}
+  {TAMU brand colors for tamu-talk}
+
+\DeclareColor {TAMUMaroon}    [HTML] {500000}
+\DeclareColor {TAMUNearBlack} [HTML] {202020}
+\DeclareColor {TAMUDarkGray}  [HTML] {3E3E3E}
+\DeclareColor {TAMUGray}      [HTML] {707070}
+\DeclareColor {TAMULightGray} [HTML] {D1D1D1}
+\DeclareColor {TAMUTan}       [HTML] {D6D3C4}
+%    \end{macrocode}
+%
+% Off-brand accent colors, meant to pair with \texttt{TAMUMaroon}.
+%
+%    \begin{macrocode}
+\DeclareColor {forest} [HTML] {2F4F3E}
+\DeclareColor {slate} [HTML] {3B5875}
+
+\DeclareColor {structure} {TAMUMaroon}
+%</colors>
+%    \end{macrocode}
+%
+% \section{\pkg{tamu-talk-boxes}: Boxes}
+%
+% Just a few named \pkg{tcolorbox} environments that look good on slides and
+% use our color palette.
+%
+%    \begin{macrocode}
+%<*boxes>
+%<@@=tamu_talk>
+\ProvidesPackage{tamu-talk-boxes}[2026-10-24 v0.1.0 tcolorbox environments for tamu-talk]
+
+\RequirePackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+
+\newtcolorbox{headerbox}[1]{
+  enhanced,
+  colback      = TAMUTan!15,
+  colframe     = TAMUMaroon,
+  coltitle     = white,
+  colbacktitle = TAMUMaroon,
+  fonttitle    = \bfseries,
+  arc          = 0pt,
+  boxrule      = 1pt,
+  title        = {#1},
+}
+
+\tcbset{
+  tamu-lasso/maroon/.style = { colframe = TAMUMaroon,    coltitle = TAMUMaroon } ,
+  tamu-lasso/black/.style  = { colframe = TAMUNearBlack, coltitle = TAMUNearBlack } ,
+}
+
+\newtcolorbox{lasso}[2][maroon]{
+  skin         = enhanced jigsaw,
+  colback      = white,
+  colbacktitle = white,
+  boxrule      = 0.5mm,
+  arc          = 0mm,
+  tamu-lasso/#1,
+  attach boxed title to top left = {xshift=4mm, yshift=-2.75mm},
+  boxed title style = {boxrule=0.4pt},
+  title        = {\textbf{#2}},
+}
+%    \end{macrocode}
+%
+% Color shortcuts for \texttt{sidebar}.
+%
+%    \begin{macrocode}
+\tcbset{
+  forest/.style = { colback = forest!15, borderline west = {3pt}{0pt}{forest} } ,
+  slate/.style  = { colback = slate!15,  borderline west = {3pt}{0pt}{slate}  } ,
+}
+
+\newtcolorbox{sidebar}[1][]{
+  enhanced,
+  sharp corners,
+  boxrule = 0pt,
+  frame hidden,
+  colback = TAMUTan!20,
+  borderline west = {3pt}{0pt}{TAMUMaroon},
+  left = 10pt, right = 8pt, top = 6pt, bottom = 6pt,
+  #1,
+}
+
+\newtcolorbox{elevate}[1][]{
+  enhanced,
+  colback  = white,
+  colframe = TAMUMaroon,
+  arc      = 2mm,
+  boxrule  = .5pt,
+  drop shadow,
+  IfEmptyTF = {#1}
+    { }
+    {
+      title        = {#1},
+      colbacktitle = TAMUMaroon,
+      coltitle     = white,
+      fonttitle    = \bfseries,
+    },
+}
+
+\newtcolorbox{outline}[1][.75pt]{
+  enhanced,
+  colback  = white,
+  colframe = TAMUMaroon,
+  boxrule  = #1,
+  arc      = 0pt,
+}
+%</boxes>
+%    \end{macrocode}
+%
+% \section{\pkg{tamu-talk-titlepage}: Title page}
+%
+%    \begin{macrocode}
+%<*titlepage>
+%<@@=tamu_talk>
+\ProvidesExplPackage
+  {tamu-talk-titlepage}
+  {2026-10-24}
+  {0.1.0}
+  {Title page styling for tamu-talk}
+
+\RequirePackage {graphicx}
+\RequirePackage {tcolorbox}
+
+\bool_new:N \g_tamu_talk_title_bold_bool
+
+\cs_new_protected:Npn \__tamu_talk_title_font:
+  {
+    \Large
+    \bool_if:NT \g_tamu_talk_title_bold_bool { \bfseries }
+  }
+
+\cs_new_protected:Npn \__tamu_talk_titlepage_set_size:N #1
+  {
+    \fontsize
+      { \dim_use:N #1 }
+      { \dim_eval:n { 1.2 #1 } }
+    \selectfont
+  }
+
+\cs_new_protected:Npn \__tamu_talk_titlepage_title_font:
+  {
+    \__tamu_talk_titlepage_set_size:N \l_tamu_talk_titlepage_title_size_dim
+    \bool_if:NT \g_tamu_talk_title_bold_bool { \bfseries }
+  }
+
+\cs_new_protected:Npn \__tamu_talk_titlepage_subtitle_font:
+  { \__tamu_talk_titlepage_set_size:N \l_tamu_talk_titlepage_subtitle_size_dim }
+
+\bool_new:N \g_tamu_talk_title_box_bool
+\str_new:N  \g_tamu_talk_title_logo_str
+\tl_new:N   \g_tamu_talk_logo_file_tl
+\tl_new:N   \l__tamu_talk_logo_path_tl
+\bool_new:N \l__tamu_talk_titlepage_logo_bool
+\box_new:N  \l__tamu_talk_titlepage_logo_box
+\box_new:N  \l__tamu_talk_titlepage_text_box
+\box_new:N  \l__tamu_talk_titlepage_tail_box
+%    \end{macrocode}
+%
+% \cs{institute} is optional, so make sure \cs{@institute} exists.
+%
+%    \begin{macrocode}
+\tl_if_exist:NF \@institute { \tl_gclear:N \@institute }
+%    \end{macrocode}
+%
+% Make sure neither the banner nor the page counter shows up on the
+% title page.
+%
+%    \begin{macrocode}
+\cs_new_nopar:Npn \ps@tamu
+  {
+    \cs_set_nopar:Npn \@oddhead { \hfil }
+    \cs_set_nopar:Npn \@oddfoot { }
+    \cs_set_eq:NN \@evenhead \@oddhead
+    \cs_set_eq:NN \@evenfoot \@oddfoot
+  }
+%    \end{macrocode}
+%
+% \subsection{Logo}
+%
+% The Texas A\&M logo is trademarked and not distributed with
+% \pkg{tamu-talk}. Look for the file given by \texttt{logo-file}, as is
+% or with a common extension, and leave \cs{l__tamu_talk_logo_path_tl}
+% empty if not found.
+%
+%    \begin{macrocode}
+\msg_new:nnn {tamu-talk} {logo-missing}
+  { Logo~file~'#1'~not~found;~see~'texdoc~tamu-talk'. }
+
+\cs_new_protected:Npn \__tamu_talk_logo_find:
+  {
+    \tl_clear:N \l__tamu_talk_logo_path_tl
+    \tl_map_inline:nn { {} {.pdf} {.png} {.jpg} }
+      {
+        \file_if_exist:nT { \g_tamu_talk_logo_file_tl ##1 }
+          {
+            \tl_set:Ne \l__tamu_talk_logo_path_tl
+              { \g_tamu_talk_logo_file_tl ##1 }
+            \tl_map_break:
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__tamu_talk_logo_include:n #1
+  {
+    % marking as an artifact seems appropriate here
+    \includegraphics
+      [
+        artifact, pagebox = artbox,
+        width = \l_tamu_talk_titlepage_logo_width_dim
+      ]
+      {#1}
+  }
+\cs_generate_variant:Nn \__tamu_talk_logo_include:n { V }
+%    \end{macrocode}
+%
+% Placeholder: a light gray box roughly the shape of the logo, with a
+% note pointing at the docs.
+%
+%    \begin{macrocode}
+\cs_new_protected:Npn \__tamu_talk_logo_placeholder_line:n #1
+  {
+    \hbox_to_wd:nn { \l_tamu_talk_titlepage_logo_width_dim }
+      { \hss #1 \hss }
+  }
+\cs_new_protected:Npn \__tamu_talk_logo_placeholder:
+  {
+    \hbox_overlap_right:n
+      {
+        \color_select:n { TAMULightGray }
+        \rule
+          { \l_tamu_talk_titlepage_logo_width_dim }
+          { \dim_eval:n { 0.8 \l_tamu_talk_titlepage_logo_width_dim } }
+      }
+    \vbox_to_ht:nn
+      { \dim_eval:n { 0.8 \l_tamu_talk_titlepage_logo_width_dim } }
+      {
+        \vss
+        \color_select:n { TAMUDarkGray }
+        \scriptsize
+        \__tamu_talk_logo_placeholder_line:n { Logo~file~not~found. }
+        \__tamu_talk_logo_placeholder_line:n
+          { See~\texttt{texdoc~tamu-talk}. }
+        \vss
+      }
+  }
+%    \end{macrocode}
+%
+% Decide whether to show a logo, and fill the logo box.
+%
+%    \begin{macrocode}
+\cs_new_protected:Npn \__tamu_talk_logo_setup:
+  {
+    \__tamu_talk_logo_find:
+    \str_case:VnF \g_tamu_talk_title_logo_str
+      {
+        { auto }
+          {
+            \tl_if_empty:NTF \l__tamu_talk_logo_path_tl
+              { \bool_set_false:N \l__tamu_talk_titlepage_logo_bool }
+              { \bool_set_true:N  \l__tamu_talk_titlepage_logo_bool }
+          }
+        { true }
+          {
+            \bool_set_true:N \l__tamu_talk_titlepage_logo_bool
+            \tl_if_empty:NT \l__tamu_talk_logo_path_tl
+              {
+                \msg_warning:nnV {tamu-talk} {logo-missing}
+                  \g_tamu_talk_logo_file_tl
+              }
+          }
+      }
+      { \bool_set_false:N \l__tamu_talk_titlepage_logo_bool }
+    \bool_if:NT \l__tamu_talk_titlepage_logo_bool
+      {
+        \hbox_set:Nn \l__tamu_talk_titlepage_logo_box
+          {
+            \tl_if_empty:NTF \l__tamu_talk_logo_path_tl
+              { \__tamu_talk_logo_placeholder: }
+              { \__tamu_talk_logo_include:V \l__tamu_talk_logo_path_tl }
+          }
+      }
+  }
+%    \end{macrocode}
+%
+% \subsection{Title block}
+%
+% Title (boxed or not), subtitle, author, institute, date.
+%
+%    \begin{macrocode}
+\cs_new_protected:Npn \__tamu_talk_titlepage_text:
+  {
+    \centering
+    \begin{center}
+      \bool_if:NTF \g_tamu_talk_title_box_bool
+        {
+          \begin{tcolorbox}
+            [
+              enhanced ,
+              colback = TAMUMaroon ,
+              colframe = TAMUMaroon ,
+              coltext = white ,
+              arc = 3mm ,
+              boxsep = 0pt ,
+              left = 8pt , right = 8pt , top = 8pt , bottom = 8pt ,
+              halign = center ,
+            ]
+            \tag_struct_begin:n { tag = Title }
+            {\__tamu_talk_titlepage_title_font: \@title \par}
+            \tag_struct_end:
+            \tl_if_empty:NF \@subtitle
+              { \vskip .25em {\__tamu_talk_titlepage_subtitle_font: \@subtitle \par} }
+          \end{tcolorbox}
+        }
+        {
+          \tag_struct_begin:n { tag = Title }
+          {\color{TAMUMaroon} \__tamu_talk_titlepage_title_font: \@title \par}
+          \tag_struct_end:
+          \tl_if_empty:NF \@subtitle
+            { \vskip .25em {\__tamu_talk_titlepage_subtitle_font: \color{TAMUMaroon!70} \@subtitle \par} }
+        }
+    \end{center}
+
+    {\@author \par}
+    {
+      \scriptsize
+      \tl_if_empty:NTF \@institute
+        { Texas~A\&M~University,~College~Station~TX }
+        { \@institute }
+      \par
+    }
+    \tl_if_empty:NF \@date
+      { {\scriptsize \@date \par} }
+  }
+%    \end{macrocode}
+%
+% \subsection{Layout}
+%
+% Distance from the top of the slide to the top of the logo, which is
+% centered \texttt{logo-height} above the bottom of the page.
+%
+%    \begin{macrocode}
+\cs_new:Npn \__tamu_talk_titlepage_logo_top:
+  {
+    \paperheight - \l_tamu_talk_titlepage_logo_height_dim
+    - ( 1in + \voffset + \topmargin + \headheight + \headsep )
+    - \topskip
+    - \box_ht_plus_dp:N \l__tamu_talk_titlepage_logo_box / 2
+  }
+%    \end{macrocode}
+%
+% FIXME TODO: this code does not seem robust.
+%
+%    \begin{macrocode}
+\cs_new_protected:Npn \__tamu_talk_titlepage_body:n #1
+  {
+    \vfill
+    \group_begin:
+    \__tamu_talk_titlepage_text:
+    \vskip .5em
+    \begin{center} #1 \end{center}
+    \group_end:
+    \vfill
+  }
+
+\prg_new_protected_conditional:Npnn \__tamu_talk_titlepage_if_crowded: { TF }
+  {
+    \tag_suspend:n { tamu-talk }
+    \vbox_set:Nn \l__tamu_talk_titlepage_text_box
+      { \__tamu_talk_titlepage_text: }
+    \vbox_set:Nn \l__tamu_talk_titlepage_tail_box
+      {
+        \vskip .5em
+        \begin{center}
+          \phantom { \box_use:N \l__tamu_talk_titlepage_logo_box }
+        \end{center}
+      }
+    \tag_resume:n { tamu-talk }
+    \dim_compare:nNnTF
+      {
+        ( \textheight
+          + \box_ht_plus_dp:N \l__tamu_talk_titlepage_text_box
+          - \box_ht_plus_dp:N \l__tamu_talk_titlepage_tail_box ) / 2
+        + .5em
+      }
+      > { \__tamu_talk_titlepage_logo_top: }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+\DeclareTemplateInterface {titlepage} {tamu} {0}
+  {
+    framestyle    : tokenlist = tamu ,
+    title-size    : length    = 18pt ,
+    subtitle-size : length    = 11pt ,
+    logo-width    : length    = .25\textwidth ,
+    logo-height   : length    = 28mm ,
+  }
+\DeclareTemplateCode {titlepage} {tamu} {0}
+  {
+    framestyle    = \l_tamu_talk_titlepage_framestyle_tl ,
+    title-size    = \l_tamu_talk_titlepage_title_size_dim ,
+    subtitle-size = \l_tamu_talk_titlepage_subtitle_size_dim ,
+    logo-width    = \l_tamu_talk_titlepage_logo_width_dim ,
+    logo-height   = \l_tamu_talk_titlepage_logo_height_dim ,
+  }
+  {
+    \tl_if_empty:NF \l_tamu_talk_titlepage_framestyle_tl
+      { \exp_args:NV \thispagestyle \l_tamu_talk_titlepage_framestyle_tl }
+    \__tamu_talk_logo_setup:
+    \bool_if:NTF \l__tamu_talk_titlepage_logo_bool
+      {
+        \__tamu_talk_titlepage_if_crowded:TF
+          {
+            % long title: the logo follows the text instead
+            \__tamu_talk_titlepage_body:n
+              {
+                \mode_leave_vertical:
+                \box_use:N \l__tamu_talk_titlepage_logo_box
+              }
+          }
+          {
+            % logo at its fixed spot; a phantom holds its space under the text
+            \vbox_to_zero:n
+              {
+                \skip_vertical:n { \__tamu_talk_titlepage_logo_top: }
+                \hbox_to_wd:nn { \textwidth }
+                  { \hss \box_use:N \l__tamu_talk_titlepage_logo_box \hss }
+                \vss
+              }
+            \__tamu_talk_titlepage_body:n
+              { \phantom { \box_use:N \l__tamu_talk_titlepage_logo_box } }
+          }
+      }
+      {
+        \vfill
+        \group_begin:
+        \__tamu_talk_titlepage_text:
+        \group_end:
+        \vfill
+      }
+  }
+%    \end{macrocode}
+%
+% Adapted from \pkg{ltx-talk}'s \cs{maketitle}: outside a frame, make one.
+%
+%    \begin{macrocode}
+\ExpandArgs { Nne } \RenewDocumentCommand \maketitle { O {} }
+  {
+    \exp_not:N \bool_if:NTF \exp_not:N \l__talk_frame_bool
+      { \exp_not:N \UseTemplate {titlepage} {tamu} { framestyle = tamu , #1 } }
+      {
+        \exp_not:N \begin {frame}
+          \bool_if:NT \l__talk_frame_title_bool { { } }
+          \exp_not:N \UseTemplate {titlepage} {tamu} { framestyle = tamu , #1 }
+        \exp_not:N \end {frame}
+      }
+  }
+%</titlepage>
+%    \end{macrocode}
+%
+% \section{\pkg{tamu-talk-header}: Header}
+%
+%    \begin{macrocode}
+%<*header>
+%<@@=tamu_talk>
+\ProvidesExplPackage
+  {tamu-talk-header}
+  {2026-10-24}
+  {0.1.0}
+  {Header styling for tamu-talk}
+
+\DeclareTemplateInterface { frametitle } { tamu } { 1 }
+  {
+    after-vspace  : skip = \bigskipamount ,
+    before-vspace : skip = 0em ,
+    color         : tokenlist = ,
+    font          : tokenlist = \Large \bfseries ,
+    vshift        : length = 0pt ,
+  }
+\DeclareTemplateCode { frametitle } { tamu } { 1 }
+  {
+    after-vspace  = \l_tamu_talk_frametitle_after_skip ,
+    before-vspace = \l_tamu_talk_frametitle_before_skip ,
+    color         = \l_tamu_talk_frametitle_color_tl ,
+    font          = \l_tamu_talk_frametitle_font_tl ,
+    vshift        = \l_tamu_talk_frametitle_vshift_dim ,
+  }
+  {
+    \noindent
+    \group_begin:
+    \tl_if_empty:NF \l_tamu_talk_frametitle_color_tl
+      { \color_select:V \l_tamu_talk_frametitle_color_tl }
+    \l_tamu_talk_frametitle_font_tl
+    \tl_if_blank:nF {#1}
+      {
+        \raise \l_tamu_talk_frametitle_vshift_dim
+        \hbox { \__talk_frame_title:n {#1} }
+      }
+    \par
+    \group_end:
+  }
+\DeclareInstance { frametitle } { header } { tamu } { }
+
+\EditInstance {frametitle} {header}
+  {
+    font   = \__tamu_talk_title_font: ,
+    vshift = 0pt ,
+  }
+%    \end{macrocode}
+%
+% Pull the title text to the left.
+%
+%    \begin{macrocode}
+\EditInstance {header} {std} { left-hspace = 6mm }
+%</header>
+%    \end{macrocode}
+%
+% \section{\pkg{tamu-talk-footer}: Footer}
+%
+%    \begin{macrocode}
+%<*footer>
+%<@@=tamu_talk>
+\ProvidesExplPackage
+  {tamu-talk-footer}
+  {2026-10-24}
+  {0.1.0}
+  {Footer styling for tamu-talk}
+
+\cs_new:Npn \@spacer { }
+\DeclareInstance {footer-element} {spacer} {talk} { }
+
+\str_new:N \g_tamu_talk_page_numbers_str
+%    \end{macrocode}
+%
+% ^^A TODO: letter the appendix sections (Appendix A, Appendix B, ...)
+%
+%    \begin{macrocode}
+\cs_new:Npn \@framecount
+  {
+    \str_if_eq:VnTF \g_tamu_talk_page_numbers_str { total }
+      { \theframe \, / \, \@frames }
+      {
+        \int_compare:nNnTF { \c@appendixframe } > 0
+          { A \theappendixframe }
+          { \theframe }
+      }
+  }
+\DeclareInstance {footer-element} {framecount} {talk} { }
+%    \end{macrocode}
+%
+% Use lining figures for the slide numbers, if the font needs them.
+%
+%    \begin{macrocode}
+\cs_new_protected:Npn \__tamu_talk_lining_numbers:
+  {
+    \cs_if_exist:NT \addfontfeature
+      { \addfontfeature { Numbers = Lining } }
+  }
+\EditInstance {footer-element} {framecount}
+  { font = \__tamu_talk_lining_numbers: }
+%</footer>
+%    \end{macrocode}
+%
+% \section{\pkg{tamu-talk-options}: Options}
+%
+%    \begin{macrocode}
+%<*options>
+%<@@=tamu_talk>
+\ProvidesExplPackage
+  {tamu-talk-options}
+  {2026-10-24}
+  {0.1.0}
+  {Option definitions for tamu-talk}
+%    \end{macrocode}
+%
+% Turn the footer counter on and record which format to typeset.
+%
+%    \begin{macrocode}
+\cs_new_protected:Npn \__tamu_talk_page_numbers_show:n #1
+  {
+    \str_gset:Nn \g_tamu_talk_page_numbers_str {#1}
+    \EditInstance {footer} {std}
+      {
+        element-order = {spacer, framecount} ,
+        separator     = \hfill ,
+        right-hspace  = 3mm ,
+      }
+  }
+%    \end{macrocode}
+%
+% The keys. What each one does is described in the user guide,
+% \texttt{tamu-talk-doc.pdf}.
+%
+%    \begin{macrocode}
+\keys_define:nn {tamu-talk}
+  {
+    page-numbers .choice: ,
+    page-numbers / none .code:n =
+      {
+        \str_gset:Nn \g_tamu_talk_page_numbers_str { none }
+        \EditInstance {footer} {std} { element-order = {} }
+      } ,
+    page-numbers / current  .code:n = { \__tamu_talk_page_numbers_show:n { current } } ,
+    page-numbers / total    .code:n = { \__tamu_talk_page_numbers_show:n { total } } ,
+    page-numbers .initial:n = total ,
+
+    title-bold .bool_gset:N = \g_tamu_talk_title_bold_bool ,
+    title-bold .default:n   = {true} ,
+    title-bold .initial:n   = {false} ,
+
+    title-box .bool_gset:N = \g_tamu_talk_title_box_bool ,
+    title-box .default:n   = {true} ,
+    title-box .initial:n   = {true} ,
+
+    title-logo .choices:nn  = { auto , true , false }
+      { \str_gset:Ne \g_tamu_talk_title_logo_str { \l_keys_choice_tl } } ,
+    title-logo .default:n   = true ,
+    title-logo .initial:n   = auto ,
+
+    logo-file .tl_gset:N    = \g_tamu_talk_logo_file_tl ,
+    logo-file .initial:n    = tamu-logo ,
+
+    header-style .choice: ,
+    header-style / plain .code:n =
+      {
+        \EditInstance {header} {std}
+          {
+            background-color = {} ,
+            color            = structure ,
+            height           = \Gm@tmargin + \headsep ,
+          }
+        \EditInstance {frametitle} {header} { vshift = 0pt }
+      } ,
+    header-style / ribbon .code:n =
+      {
+        \EditInstance {header} {std}
+          {
+            background-color = TAMUMaroon ,
+            color            = white ,
+            height           = 6.65mm ,
+          }
+        \EditInstance {frametitle} {header} { vshift = 0pt }
+      } ,
+    header-style / banner .code:n =
+      {
+        \EditInstance {header} {std}
+          {
+            background-color = TAMUMaroon ,
+            color            = white ,
+            height           = \Gm@tmargin + \headsep ,
+          }
+        \EditInstance {frametitle} {header} { vshift = 1.735mm }
+      } ,
+    header-style .initial:n = banner ,
+  }
+%</options>
+%    \end{macrocode}
+%
+% \end{implementation}

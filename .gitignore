@@ -1,0 +1,8 @@
+*.zip
+build/*
+*.pdf
+*luamml-mathml.html
+
+# just in case...
+tamu-logo.*
+tamu-nowords.*
