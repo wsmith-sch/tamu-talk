@@ -1,15 +1,12 @@
--- Build script for tamu-talk (see `l3build --help`)
-
 module = "tamu-talk"
 
 typesetexe   = "lualatex"
 typesetfiles = {"tamu-talk-doc.tex", "tamu-talk-code.tex", "tamu-talk-example.tex"}
 textfiles    = {"README.md", "CHANGELOG.md", "LICENSE"}
 
-packtdszip = true
+-- not needed apparently:
+packtdszip = false
 
--- `l3build tag X.Y.Z` stamps the version and today's date into the sources
--- and the user guide, and starts a changelog section for it
 tagfiles = {"tamu-talk.dtx", "tamu-talk-doc.tex", "CHANGELOG.md"}
 
 function update_tag(file, content, tagname, tagdate)
@@ -29,7 +26,6 @@ function update_tag(file, content, tagname, tagdate)
   return content
 end
 
--- `l3build upload` sends the CTAN zip with these details
 uploadconfig = {
   pkg        = "tamu-talk",
   author     = "Wyatt Smith",
@@ -41,8 +37,4 @@ uploadconfig = {
   repository = "https://github.com/wsmith-sch/tamu-talk",
   bugtracker = "https://github.com/wsmith-sch/tamu-talk/issues",
   topic      = {"presentation"},
-  update     = false,
-  note       = "The Texas A&M logo is intentionally not included (trademark). "
-    .. "The package works without it and documents how users obtain it, "
-    .. "the same approach as tuda-ci.",
 }

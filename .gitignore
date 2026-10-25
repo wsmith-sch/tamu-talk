@@ -6,3 +6,4 @@ build/*
 # just in case...
 tamu-logo.*
 tamu-nowords.*
+*.curlopt
