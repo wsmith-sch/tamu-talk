@@ -95,11 +95,11 @@ it as follows:
    result, export the [SVG](https://marcomm.tamu.edu/downloads/?df=1085) to a
    large PNG and crop that instead).
 3. Put it where TeX can find it, using one of these:
-   - **Once for all documents locally:** a `tamu-talk-logo` folder in your personal
-     texmf tree, e.g. `~/texmf/tex/latex/tamu-talk-logo/tamu-logo.png`. Run
-     `kpsewhich -var-value TEXMFHOME` to find that tree on your system.
-   - **For one document:** the same folder as your `.tex` file. On Overleaf,
-     upload it to your project.
+   - **Once for all documents locally:** anywhere under `tex/` in your
+     personal texmf tree, e.g. `~/texmf/tex/latex/my-logos/tamu-logo.png`.
+     Run `kpsewhich -var-value TEXMFHOME` to find that tree on your system.
+   - **For one document:** the same folder as your main `.tex` file.
+     On Overleaf, upload it to your project's top level.
 
 To use a file with a different name, set `logo-file` as follows:
 ```latex

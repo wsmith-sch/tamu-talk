@@ -29,6 +29,8 @@ The development version of the bundle can be found at
 \usepackage{unicode-math}
 
 \NewDocumentCommand\opt{m}{\texttt{#1}}
+\AddToHook{cmd/DescribeOption/before}{\addvspace{\medskipamount}\noindent}
+\AddToHook{cmd/DescribeEnv/before}{\addvspace{\medskipamount}\noindent}
 
 \title{The \pkg{tamu-talk} package: a Texas A\&M theme for \pkg{ltx-talk}}
 \author{Wyatt Smith\thanks{E-mail: \href{mailto:216wsmith@gmail.com}{216wsmith@gmail.com}}}
@@ -87,52 +89,69 @@ authorized to use it:
   rsvg-convert -w 2400 TAM-Logo1.svg \
     | magick - -trim +repage tamu-logo.png
 \end{verbatim}
-  \item Put it in a \texttt{tamu-talk-logo} folder in your personal texmf
-    tree (\texttt{kpsewhich -var-value TEXMFHOME} shows where that is), or
-    next to your \texttt{.tex} file. On Overleaf, upload it to your project.
+  \item Put it anywhere under \texttt{tex/} in your texmf tree
+    (\texttt{kpsewhich -var-value TEXMFHOME} shows where that is), or next to
+    your main \texttt{.tex} file. On Overleaf, upload it to your project's top level.
 \end{enumerate}
 
 \section{Options}
 
-\begin{description}
-  \item[\opt{page-numbers}] Sets the page number in the footer. Values:
-    \opt{none} (no number), \opt{current} (the frame number; frames after
-    \cs{appendix} are numbered A1, A2, \dots) or \opt{total}
-    (\enquote{frame/total}; the total stops at \cs{appendix}, so backup
-    frames show numbers past it, such as 11/10). The default value is
-    \opt{total}.
-  \item[\opt{header-style}] Sets the style of the frame header. Values:
-    \opt{banner} (a maroon bar the full height of the header), \opt{ribbon}
-    (a thinner maroon bar) or \opt{plain} (maroon text on white).
-    The default value is \opt{banner}.
-  \item[\opt{title-box}] Puts the title and subtitle in a maroon box on the
-    title page; without it, they are printed in maroon. Values: \opt{true}
-    or \opt{false}. The default value is \opt{true}.
-  \item[\opt{title-bold}] Sets the title, and the frame titles, in bold.
-    Values: \opt{true} or \opt{false}. The default value is \opt{false}.
-  \item[\opt{title-logo}] Controls the Texas A\&M logo on the title page.
-    Values: \opt{auto} (the logo is shown if its file is found), \opt{true}
-    (a gray placeholder is drawn, and a warning given, when it is not) or
-    \opt{false} (no logo). The default value is \opt{auto}.
-  \item[\opt{logo-file}] Sets the logo file, with or without extension.
-    Value: a file name. The default value is \opt{tamu-logo}.
-\end{description}
+\DescribeOption{page-numbers}
+Sets the page number in the footer. Values:
+\opt{none} (no number), \opt{current} (the frame number; frames after
+\cs{appendix} are numbered A1, A2, \dots) or \opt{total}
+(\enquote{frame/total}; the total stops at \cs{appendix}, so backup
+frames show numbers past it, such as 11/10). The default value is
+\opt{total}.
+
+\DescribeOption{header-style}
+Sets the style of the frame header. Values:
+\opt{banner} (a maroon bar the full height of the header), \opt{ribbon}
+(a thinner maroon bar) or \opt{plain} (maroon text on white).
+The default value is \opt{banner}.
+
+\DescribeOption{title-box}
+Puts the title and subtitle in a maroon box on the
+title page; without it, they are printed in maroon. Values: \opt{true}
+or \opt{false}. The default value is \opt{true}.
+
+\DescribeOption{title-bold}
+Sets the title, and the frame titles, in bold.
+Values: \opt{true} or \opt{false}. The default value is \opt{false}.
+
+\DescribeOption{title-logo}
+Controls the Texas A\&M logo on the title page.
+Values: \opt{auto} (the logo is shown if its file is found), \opt{true}
+(a gray placeholder is drawn, and a warning given, when it is not) or
+\opt{false} (no logo). The default value is \opt{auto}.
+
+\DescribeOption{logo-file}
+Sets the logo file, with or without extension.
+Value: a file name. The default value is \opt{tamu-logo}.
 
 \section{The title page}
 
 \cs{maketitle} uses \cs{title}, \cs{subtitle}, \cs{author}, \cs{institute}
 and \cs{date}. If \cs{institute} is not given, \enquote{Texas A\&M University,
-College Station TX} is used. Its optional argument sets the layout:
+College Station TX} is used. Its optional arguments set the layout:
 \begin{verbatim}
   \maketitle[title-size = 20pt, logo-height = 30mm]
 \end{verbatim}
-\begin{description}
-  \item[\opt{title-size}, \opt{subtitle-size}] Font sizes of the title and
-    subtitle. The default values are \opt{18pt} and \opt{11pt}.
-  \item[\opt{logo-width}] Width of the logo. The default value is \opt{.25\cs{textwidth}}.
-  \item[\opt{logo-height}] Height of the center of the logo above the bottom
-    of the slide. The default value is \opt{28mm}.
-\end{description}
+
+\DescribeOption{title-size}
+Font size of the title. The default value is \opt{18pt}.
+
+\DescribeOption{subtitle-size}
+Font size of the subtitle. The default value is \opt{11pt}.
+
+\DescribeOption{logo-width}
+Width of the logo. The default value is \opt{.25\cs{textwidth}}.
+
+\DescribeOption{logo-height}
+Height of the center of the logo above the bottom
+of the slide. The default value is \opt{28mm}.
+
+\medskip\noindent
 If a long title would run into the logo, the logo is moved below the text.
 You are encouraged to avoid long titles, however.
 
@@ -147,21 +166,33 @@ colors, \opt{forest} and \opt{slate}, pair well with maroon.\par}
 
 Just a few named \pkg{tcolorbox} environments that look good on slides and
 use our color palette.
-\begin{description}
-  \item[\opt{headerbox}\marg{title}] A maroon header bar over a tan body.
-  \item[\opt{lasso}\oarg{maroon\textbar{}black}\marg{title}] A border with a
-    title tab.
-  \item[\opt{sidebar}\oarg{options}] A maroon bar on the left of a tan body,
-    without a title. The options are \opt{forest} or \opt{slate} for the
-    off-brand colors, or any \pkg{tcolorbox} keys.
-  \item[\opt{elevate}\oarg{title}] Rounded corners and a drop shadow, with a
-    header bar if a title is given.
-  \item[\opt{outline}\oarg{line width}] A thin maroon border only.
-\end{description}
+
+\DescribeEnv{headerbox}
+\cs{begin}\texttt{\{headerbox\}}\marg{title}\\
+A maroon header bar over a tan body.
+
+\DescribeEnv{lasso}
+\cs{begin}\texttt{\{lasso\}}\oarg{maroon\textbar{}black}\marg{title}\\
+A border with a title tab.
+
+\DescribeEnv{sidebar}
+\cs{begin}\texttt{\{sidebar\}}\oarg{options}\\
+A maroon bar on the left of a tan body,
+without a title. The options are \opt{forest} or \opt{slate} for the
+off-brand colors, or any \pkg{tcolorbox} keys.
+
+\DescribeEnv{elevate}
+\cs{begin}\texttt{\{elevate\}}\oarg{title}\\
+Rounded corners and a drop shadow, with a
+header bar if a title is given.
+
+\DescribeEnv{outline}
+\cs{begin}\texttt{\{outline\}}\oarg{line width}\\
+A thin maroon border only.
 
 \section{Known limits}
 
-\pkg{tamu-talk} uses a few internals of \pkg{ltx-talk} and \pkg{geometry},
+\pkg{tamu-talk} uses a few internals of \pkg{ltx-talk},
 so a new release of \pkg{ltx-talk} can break it. Please report problems at
 \url{https://github.com/wsmith-sch/tamu-talk/issues}.
 
